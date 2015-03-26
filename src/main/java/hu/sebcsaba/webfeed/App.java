@@ -1,7 +1,6 @@
 package hu.sebcsaba.webfeed;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,18 +27,18 @@ public class App {
 		System.out.println("config file is a java properties file, check example in jar");
 	}
 
-	public void run(String configFile) throws FileNotFoundException, IOException {
+	public void run(String configFile) throws Exception {
 		Serializer s = new Serializer();
 		Config config = s.readConfig(configFile);
 
 		Processor p = new Processor();
 		Notifier notifier = new Notifier();
 
-		Set<String> oldEntries = s.readEntries();
+		Set<String> oldEntries = s.readEntries(config);
 		Set<String> allEntries = p.process();
 		Set<String> newEntries = calculateNewEntries(oldEntries, allEntries);
 		notifier.notify(newEntries);
-		s.saveEntries(allEntries);
+		s.saveEntries(config, allEntries);
 	}
 
 	private Set<String> calculateNewEntries(Set<String> oldEntries, Set<String> currentEntries) {
