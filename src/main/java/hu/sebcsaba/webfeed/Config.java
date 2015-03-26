@@ -12,6 +12,7 @@ public class Config {
 	private String serializedDataFilename;
 	private Map<String, String> urls;
 	private Map<String, String> selects;
+	private Map<String, String> pagers;
 
 	public String getSerializedDataFilename() {
 		return serializedDataFilename;
@@ -25,6 +26,10 @@ public class Config {
 		return selects;
 	}
 
+	public Map<String, String> getPagers() {
+		return pagers;
+	}
+
 	public static Config readConfig(String configFile) throws FileNotFoundException, IOException {
 		Properties p = new Properties();
 		p.load(new FileInputStream(configFile));
@@ -33,6 +38,7 @@ public class Config {
 		result.serializedDataFilename = p.getProperty("data.serialized");
 		result.urls = getPropertyBlock(p, "url.");
 		result.selects = getPropertyBlock(p, "select.");
+		result.pagers = getPropertyBlock(p, "pager.");
 		return result;
 	}
 
