@@ -11,8 +11,14 @@ import java.util.Set;
 
 public class Serializer {
 
+	private final Config config;
+
+	public Serializer(Config config) {
+		this.config = config;
+	}
+
 	@SuppressWarnings("unchecked")
-	public Set<String> readEntries(Config config) throws IOException, ClassNotFoundException {
+	public Set<String> readEntries() throws IOException, ClassNotFoundException {
 		File f = new File(config.getSerializedDataFilename());
 		if (!f.canRead()) {
 			System.err.println("Unable to access serialized data file: "+f);
@@ -26,7 +32,7 @@ public class Serializer {
 		}
 	}
 
-	public void saveEntries(Config config, Set<String> allEntries) throws IOException {
+	public void saveEntries(Set<String> allEntries) throws IOException {
 		File f = new File(config.getSerializedDataFilename());
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
 		try {

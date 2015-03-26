@@ -30,15 +30,15 @@ public class App {
 	public void run(String configFile) throws Exception {
 		Config config = Config.readConfig(configFile);
 
-		Serializer s = new Serializer();
+		Serializer s = new Serializer(config);
 		Processor p = new Processor();
 		Notifier notifier = new Notifier();
 
-		Set<String> oldEntries = s.readEntries(config);
+		Set<String> oldEntries = s.readEntries();
 		Set<String> allEntries = p.process(config);
 		Set<String> newEntries = calculateNewEntries(oldEntries, allEntries);
 		notifier.notify(newEntries);
-		s.saveEntries(config, allEntries);
+		s.saveEntries(allEntries);
 	}
 
 	private Set<String> calculateNewEntries(Set<String> oldEntries, Set<String> currentEntries) {
