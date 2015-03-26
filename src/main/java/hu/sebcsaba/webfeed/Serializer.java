@@ -2,36 +2,14 @@ package hu.sebcsaba.webfeed;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 public class Serializer {
-
-	public Config readConfig(String configFile) throws FileNotFoundException, IOException {
-		Properties p = new Properties();
-		p.load(new FileInputStream(configFile));
-
-		Config result = new Config();
-		result.setSerializedDataFilename(p.getProperty("data.serialized"));
-
-		List<String> urls = new ArrayList<>();
-		for (Object o : p.keySet()) {
-			String key = (String) o;
-			if (key.startsWith("url.")) {
-				urls.add(p.getProperty(key));
-			}
-		}
-		result.setUrls(urls);
-		return result;
-	}
 
 	@SuppressWarnings("unchecked")
 	public Set<String> readEntries(Config config) throws IOException, ClassNotFoundException {

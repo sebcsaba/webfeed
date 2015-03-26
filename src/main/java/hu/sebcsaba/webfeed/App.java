@@ -28,9 +28,9 @@ public class App {
 	}
 
 	public void run(String configFile) throws Exception {
-		Serializer s = new Serializer();
-		Config config = s.readConfig(configFile);
+		Config config = Config.readConfig(configFile);
 
+		Serializer s = new Serializer();
 		Processor p = new Processor();
 		Notifier notifier = new Notifier();
 
