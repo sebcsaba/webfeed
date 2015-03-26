@@ -31,11 +31,11 @@ public class App {
 		Config config = Config.readConfig(configFile);
 
 		Serializer s = new Serializer(config);
-		Processor p = new Processor();
-		Notifier notifier = new Notifier();
+		Processor p = new Processor(config);
+		Notifier notifier = new Notifier(config);
 
 		Set<String> oldEntries = s.readEntries();
-		Set<String> allEntries = p.process(config);
+		Set<String> allEntries = p.process();
 		Set<String> newEntries = calculateNewEntries(oldEntries, allEntries);
 		notifier.notify(newEntries);
 		s.saveEntries(allEntries);

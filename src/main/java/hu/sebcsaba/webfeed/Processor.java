@@ -5,7 +5,13 @@ import java.util.Set;
 
 public class Processor {
 
-	public Set<String> process(Config config) {
+	private final Config config;
+
+	public Processor(Config config) {
+		this.config = config;
+	}
+
+	public Set<String> process() {
 		HashSet<String> result = new HashSet<>();
 		for (String code : config.getUrls().keySet()) {
 			System.out.println("processing "+code);
