@@ -35,7 +35,7 @@ public class App {
 		Notifier notifier = new Notifier();
 
 		Set<String> oldEntries = s.readEntries(config);
-		Set<String> allEntries = p.process();
+		Set<String> allEntries = p.process(config);
 		Set<String> newEntries = calculateNewEntries(oldEntries, allEntries);
 		notifier.notify(newEntries);
 		s.saveEntries(config, allEntries);

@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -19,6 +21,15 @@ public class Serializer {
 
 		Config result = new Config();
 		result.setSerializedDataFilename(p.getProperty("data.serialized"));
+
+		List<String> urls = new ArrayList<>();
+		for (Object o : p.keySet()) {
+			String key = (String) o;
+			if (key.startsWith("url.")) {
+				urls.add(p.getProperty(key));
+			}
+		}
+		result.setUrls(urls);
 		return result;
 	}
 

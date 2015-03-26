@@ -5,9 +5,12 @@ import java.util.Set;
 
 public class Processor {
 
-	public Set<String> process() {
-		// TODO Auto-generated method stub
-		return new HashSet<>();
+	public Set<String> process(Config config) {
+		HashSet<String> result = new HashSet<>();
+		for (String url : config.getUrls()) {
+			System.out.println("process "+url);
+		}
+		return result;
 	}
 
 }
