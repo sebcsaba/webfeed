@@ -11,6 +11,7 @@ public class Config {
 
 	private String serializedDataFilename;
 	private Map<String, String> urls;
+	private Map<String, String> selects;
 
 	public String getSerializedDataFilename() {
 		return serializedDataFilename;
@@ -20,22 +21,27 @@ public class Config {
 		return urls;
 	}
 
+	public Map<String, String> getSelects() {
+		return selects;
+	}
+
 	public static Config readConfig(String configFile) throws FileNotFoundException, IOException {
 		Properties p = new Properties();
 		p.load(new FileInputStream(configFile));
 
 		Config result = new Config();
 		result.serializedDataFilename = p.getProperty("data.serialized");
-		result.urls = propGetUrls(p);
+		result.urls = getPropertyBlock(p, "url.");
+		result.selects = getPropertyBlock(p, "select.");
 		return result;
 	}
 
-	private static Map<String, String> propGetUrls(Properties p) {
+	private static Map<String, String> getPropertyBlock(Properties p, String prefix) {
 		Map<String, String> result = new HashMap<String, String>();
 		for (Object o : p.keySet()) {
 			String key = (String) o;
-			if (key.startsWith("url.")) {
-				String code = key.substring(4);
+			if (key.startsWith(prefix)) {
+				String code = key.substring(prefix.length());
 				result.put(code, p.getProperty(key));
 			}
 		}
