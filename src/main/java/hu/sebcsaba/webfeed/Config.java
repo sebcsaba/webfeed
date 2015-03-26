@@ -3,20 +3,20 @@ package hu.sebcsaba.webfeed;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class Config {
 
 	private String serializedDataFilename;
-	private List<String> urls;
+	private Map<String, String> urls;
 
 	public String getSerializedDataFilename() {
 		return serializedDataFilename;
 	}
 
-	public List<String> getUrls() {
+	public Map<String, String> getUrls() {
 		return urls;
 	}
 
@@ -30,15 +30,16 @@ public class Config {
 		return result;
 	}
 
-	private static List<String> propGetUrls(Properties p) {
-		List<String> urls = new ArrayList<>();
+	private static Map<String, String> propGetUrls(Properties p) {
+		Map<String, String> result = new HashMap<String, String>();
 		for (Object o : p.keySet()) {
 			String key = (String) o;
 			if (key.startsWith("url.")) {
-				urls.add(p.getProperty(key));
+				String code = key.substring(4);
+				result.put(code, p.getProperty(key));
 			}
 		}
-		return urls;
+		return result;
 	}
 
 }

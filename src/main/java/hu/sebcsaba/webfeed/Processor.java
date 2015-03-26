@@ -7,8 +7,8 @@ public class Processor {
 
 	public Set<String> process(Config config) {
 		HashSet<String> result = new HashSet<>();
-		for (String url : config.getUrls()) {
-			System.out.println("process "+url);
+		for (String code : config.getUrls().keySet()) {
+			System.out.println("processing "+code);
 		}
 		return result;
 	}
