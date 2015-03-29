@@ -34,11 +34,15 @@ public class App {
 		Processor p = new Processor(config);
 		Notifier notifier = new Notifier(config);
 
-		Set<String> oldEntries = s.readEntries();
-		Set<String> allEntries = p.process();
-		Set<String> newEntries = calculateNewEntries(oldEntries, allEntries);
-		notifier.notify(newEntries);
-		s.saveEntries(allEntries);
+		try {
+			Set<String> oldEntries = s.readEntries();
+			Set<String> allEntries = p.process();
+			Set<String> newEntries = calculateNewEntries(oldEntries, allEntries);
+			notifier.notify(newEntries);
+			s.saveEntries(allEntries);
+		} finally {
+			p.close();
+		}
 	}
 
 	private Set<String> calculateNewEntries(Set<String> oldEntries, Set<String> currentEntries) {

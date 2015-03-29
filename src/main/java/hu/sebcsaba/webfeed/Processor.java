@@ -1,6 +1,9 @@
 package hu.sebcsaba.webfeed;
 
+import java.io.Closeable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,12 +12,18 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class Processor {
+public class Processor implements Closeable {
 
 	private final Config config;
+	private final PrintWriter log;
 
-	public Processor(Config config) {
+	public Processor(Config config) throws FileNotFoundException {
 		this.config = config;
+		this.log = new PrintWriter("webfeed.log");
+	}
+
+	public void close() {
+		log.close();
 	}
 
 	public Set<String> process() throws IOException {
@@ -38,11 +47,11 @@ public class Processor {
 	}
 
 	private String processSitePage(Set<String> result, String code, String siteUrl, int page) throws IOException {
-		System.out.println("processing "+code+" page "+page);
-		System.out.println("* loading "+siteUrl);
+		log.println("processing "+code+" page "+page);
+		log.println("* loading "+siteUrl);
 		Document doc = Jsoup.connect(siteUrl).get();
 		Elements items = doc.select(config.getSelects().get(code));
-		System.out.println("* found items: "+items.size());
+		log.println("* found items: "+items.size());
 		for (Element item : items) {
 			String href = item.attr("href");
 			result.add(getAbsoluteUrl(siteUrl, href));

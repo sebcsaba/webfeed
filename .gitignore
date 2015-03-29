@@ -7,3 +7,4 @@ release.properties
 .classpath
 /config.*.properties
 /*.dat
+webfeed.log
