@@ -1,5 +1,7 @@
 package hu.sebcsaba.webfeed;
 
+import hu.sebcsaba.webfeed.Config.Task;
+
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,35 +30,35 @@ public class Processor implements Closeable {
 
 	public Set<String> process() throws IOException {
 		HashSet<String> result = new HashSet<>();
-		for (String code : config.getUrls().keySet()) {
-			Set<String> site = processSite(code);
+		for (Task task : config.getTasks().values()) {
+			Set<String> site = processSite(task);
 			result.addAll(site);
 		}
 		return result;
 	}
 
-	private Set<String> processSite(String code) throws IOException {
-		String siteUrl = config.getUrls().get(code);
+	private Set<String> processSite(Task task) throws IOException {
+		String siteUrl = task.getUrls().iterator().next();
 		Set<String> result = new HashSet<>();
 		String nextPageUrl = siteUrl;
 		int page = 0;
 		do {
-			nextPageUrl = processSitePage(result, code, nextPageUrl, page++);
+			nextPageUrl = processSitePage(result, task, nextPageUrl, page++);
 		} while (nextPageUrl != null);
 		return result;
 	}
 
-	private String processSitePage(Set<String> result, String code, String siteUrl, int page) throws IOException {
-		log.println("processing "+code+" page "+page);
+	private String processSitePage(Set<String> result, Task task, String siteUrl, int page) throws IOException {
+		log.println("processing "+task.getName()+" page "+page);
 		log.println("* loading "+siteUrl);
 		Document doc = Jsoup.connect(siteUrl).get();
-		Elements items = doc.select(config.getSelects().get(code));
+		Elements items = doc.select(task.getSelector());
 		log.println("* found items: "+items.size());
 		for (Element item : items) {
 			String href = item.attr("href");
 			result.add(getAbsoluteUrl(siteUrl, href));
 		}
-		String pager = config.getPagers().get(code);
+		String pager = task.getPager();
 		if (pager != null) {
 			Element nextLink = doc.select(pager).first();
 			if (nextLink!=null) {
