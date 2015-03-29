@@ -68,6 +68,10 @@ public class Processor implements Closeable {
 	}
 
 	private String getAbsoluteUrl(String startUrl, String href) {
+		int hash = href.indexOf('#');
+		if (hash>=0) {
+			href = href.substring(0, hash);
+		}
 		if (href.startsWith("http")) {
 			return href;
 		} else {
