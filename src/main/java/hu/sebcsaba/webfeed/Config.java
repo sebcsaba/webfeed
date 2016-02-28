@@ -13,11 +13,18 @@ import java.util.regex.Pattern;
 
 public class Config {
 
+	public static final int DEFAULT_TIMEOUT = 10000;
+
 	private String serializedDataFilename;
+	private int timeout;
 	private Map<String, Task> tasks = new HashMap<>();
 
 	public String getSerializedDataFilename() {
 		return serializedDataFilename;
+	}
+
+	public int getTimeout() {
+		return timeout;
 	}
 
 	public Map<String, Task> getTasks() {
@@ -57,6 +64,7 @@ public class Config {
 	public static Config readConfig(Properties p) {
 		Config result = new Config();
 		result.serializedDataFilename = p.getProperty("data.serialized");
+		result.timeout = Integer.parseInt(p.getProperty("connection.timeout_ms", Integer.toString(DEFAULT_TIMEOUT)));
 		for (String taskName : getTaskNames(p)) {
 			Task task = new Task();
 			task.name = taskName;

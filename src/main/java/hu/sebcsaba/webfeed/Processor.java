@@ -54,7 +54,7 @@ public class Processor implements Closeable {
 	private String processSitePage(Set<String> result, Task task, String siteUrl, int urlIndex, int pageIndex) throws IOException {
 		log.println("processing "+task.getName()+", url #"+urlIndex+", page #"+pageIndex);
 		log.println("* loading "+siteUrl);
-		Document doc = Jsoup.connect(siteUrl).get();
+		Document doc = Jsoup.connect(siteUrl).timeout(config.getTimeout()).get();
 		Elements items = doc.select(task.getSelector());
 		log.println("* found items: "+items.size());
 		for (Element item : items) {
