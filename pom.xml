@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>hu.sebcsaba</groupId>
 	<artifactId>webfeed</artifactId>
-	<version>0.0.3-SNAPSHOT</version>
+	<version>0.0.3</version>
 	<name>webfeed</name>
 	<description>Check some webpages, search for new links etc, send mail about the news</description>
 	<properties>
@@ -11,7 +11,7 @@
 	</properties>
 	<scm>
 		<connection>scm:git:git@github.com:sebcsaba/webfeed.git</connection>
-	  <tag>HEAD</tag>
+	  <tag>webfeed-0.0.3</tag>
   </scm>
 	<dependencies>
 		<dependency>
