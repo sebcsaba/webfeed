@@ -51,10 +51,12 @@ public class Config {
 	public static Config readConfig(String configFile) throws FileNotFoundException, IOException {
 		Properties p = new Properties();
 		p.load(new FileInputStream(configFile));
+		return readConfig(p);
+	}
 
+	public static Config readConfig(Properties p) {
 		Config result = new Config();
 		result.serializedDataFilename = p.getProperty("data.serialized");
-
 		for (String taskName : getTaskNames(p)) {
 			Task task = new Task();
 			task.name = taskName;
@@ -63,7 +65,6 @@ public class Config {
 			task.pager = p.getProperty("task."+taskName+".pager");
 			result.tasks.put(taskName, task);
 		}
-
 		return result;
 	}
 

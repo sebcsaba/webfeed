@@ -8,3 +8,4 @@ release.properties
 /config.*.properties
 /*.dat
 webfeed.log
+.settings/
