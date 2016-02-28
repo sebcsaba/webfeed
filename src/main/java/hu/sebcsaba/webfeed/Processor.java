@@ -38,18 +38,21 @@ public class Processor implements Closeable {
 	}
 
 	private Set<String> processSite(Task task) throws IOException {
-		String siteUrl = task.getUrls().iterator().next();
 		Set<String> result = new HashSet<>();
-		String nextPageUrl = siteUrl;
-		int page = 0;
-		do {
-			nextPageUrl = processSitePage(result, task, nextPageUrl, page++);
-		} while (nextPageUrl != null);
+		int urlIndex = 0;
+		for (String siteUrl : task.getUrls()) {
+			++urlIndex;
+			String nextPageUrl = siteUrl;
+			int pageIndex = 0;
+			do {
+				nextPageUrl = processSitePage(result, task, nextPageUrl, urlIndex, ++pageIndex);
+			} while (nextPageUrl != null);
+		}
 		return result;
 	}
 
-	private String processSitePage(Set<String> result, Task task, String siteUrl, int page) throws IOException {
-		log.println("processing "+task.getName()+" page "+page);
+	private String processSitePage(Set<String> result, Task task, String siteUrl, int urlIndex, int pageIndex) throws IOException {
+		log.println("processing "+task.getName()+", url #"+urlIndex+", page #"+pageIndex);
 		log.println("* loading "+siteUrl);
 		Document doc = Jsoup.connect(siteUrl).get();
 		Elements items = doc.select(task.getSelector());
