@@ -82,11 +82,11 @@ public class Config {
 	}
 
 	private static Set<String> getUrls(Properties p, String taskName) {
-		Pattern expr = Pattern.compile("^task\\."+taskName+"\\.url\\..*");
+		Pattern expr = Pattern.compile("^task\\."+taskName+"\\.url($|\\..*)");
 		Set<String> result = new HashSet<>();
 		for (Object keyObject : p.keySet()) {
 			String key = (String) keyObject;
-			Matcher m = expr.matcher(key+".");
+			Matcher m = expr.matcher(key);
 			if (m.matches()) {
 				result.add(p.getProperty(key));
 			}
