@@ -88,7 +88,49 @@ public class Config {
 			String key = (String) keyObject;
 			Matcher m = expr.matcher(key);
 			if (m.matches()) {
-				result.add(p.getProperty(key));
+				String url = p.getProperty(key);
+				Map<String,Set<String>> vars = getTemplateVariables(p, taskName);
+				Set<String> urls = replaceTemplateVariables(url, vars);
+				result.addAll(urls);
+			}
+		}
+		return result;
+	}
+
+	private static Set<String> replaceTemplateVariables(String url, Map<String, Set<String>> vars) {
+		Set<String> result = new HashSet<>();
+		Pattern expr = Pattern.compile("^(.*)\\{(\\w+)\\}(.*)$");
+		Matcher m = expr.matcher(url);
+		if (m.matches()) {
+			String varName = m.group(2);
+			if (!vars.containsKey(varName)) {
+				throw new IllegalArgumentException("unknown variable '"+varName+"' for url '"+url+"'");
+			}
+			String before = m.group(1);
+			String after = m.group(3);
+			for (String val : vars.get(varName)) {
+				String newUrl = before + val + after;
+				result.addAll(replaceTemplateVariables(newUrl, vars));
+			}
+		} else {
+			result.add(url);
+		}
+		return result;
+	}
+
+	private static Map<String,Set<String>> getTemplateVariables(Properties p, String taskName) {
+		Pattern expr = Pattern.compile("^task\\."+taskName+"\\.variable\\.(\\w+)$");
+		Map<String, Set<String>> result = new HashMap<>();
+		for (Object keyObject : p.keySet()) {
+			String key = (String) keyObject;
+			Matcher m = expr.matcher(key);
+			Set<String> values = new HashSet<>();
+			if (m.matches()) {
+				String varName = m.group(1);
+				for (String s : p.getProperty(key).split(";")) {
+					values.add(s);
+				}
+				result.put(varName, values);
 			}
 		}
 		return result;
