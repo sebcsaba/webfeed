@@ -10,7 +10,9 @@ import java.util.Set;
 public class App {
 
 	private static boolean help = false;
+	private static boolean debug = false;
 	private static String configfile;
+
 	public static void main(String[] args) {
 		processArgs(new LinkedList<String>(Arrays.asList(args)));
 		if (help) {
@@ -21,9 +23,15 @@ public class App {
 			new App().run(configfile);
 		} catch (FileNotFoundException e) {
 			System.err.println("Unable to find configfile at "+args[0]);
+			if (debug) {
+				e.printStackTrace();
+			}
 			System.exit(-1);
 		} catch (Exception e) {
 			System.err.println("An error occured: "+e.getMessage());
+			if (debug) {
+				e.printStackTrace();
+			}
 			System.exit(-1);
 		}
 	}
@@ -31,6 +39,10 @@ public class App {
 	private static void processArgs(Queue<String> params) {
 		if ("--help".equals(params.peek())) {
 			help = true;
+			params.remove();
+		}
+		if ("--debug".equals(params.peek())) {
+			debug = true;
 			params.remove();
 		}
 		if (params.isEmpty()) {
@@ -41,7 +53,7 @@ public class App {
 	}
 
 	private static void printHelp() {
-		System.out.println("Usage: java -jar webfeed.jar [--help] <configfile>");
+		System.out.println("Usage: java -jar webfeed.jar [--help] [--debug] <configfile>");
 		System.out.println("config file is a java properties file, check example in jar");
 	}
 
