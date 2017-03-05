@@ -17,6 +17,7 @@ public class Config {
 
 	private String serializedDataFilename;
 	private int timeout;
+	private Map<String, String> httpHeaders;
 	private Map<String, Task> tasks = new HashMap<>();
 
 	public String getSerializedDataFilename() {
@@ -25,6 +26,10 @@ public class Config {
 
 	public int getTimeout() {
 		return timeout;
+	}
+
+	public Map<String, String> getHttpHeaders() {
+		return httpHeaders;
 	}
 
 	public Map<String, Task> getTasks() {
@@ -65,6 +70,7 @@ public class Config {
 		Config result = new Config();
 		result.serializedDataFilename = p.getProperty("data.serialized");
 		result.timeout = Integer.parseInt(p.getProperty("connection.timeout_ms", Integer.toString(DEFAULT_TIMEOUT)));
+		result.httpHeaders = getHttpHeaders(p);
 		for (String taskName : getTaskNames(p)) {
 			Task task = new Task();
 			task.name = taskName;
@@ -74,6 +80,18 @@ public class Config {
 			result.tasks.put(taskName, task);
 		}
 		return result;
+	}
+
+	private static Map<String, String> getHttpHeaders(Properties p) {
+		final String prefix = "http.header.";
+		Map<String, String> result = new HashMap<>();
+		for (Object keyObject : p.keySet()) {
+			String key = (String) keyObject;
+			if (key.startsWith(prefix)) {
+				result.put(key.substring(prefix.length()), p.getProperty(key));
+			}
+		}
+		return result ;
 	}
 
 	private static Set<String> getTaskNames(Properties p) {

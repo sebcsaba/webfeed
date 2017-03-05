@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.jsoup.Connection;
@@ -76,6 +77,10 @@ public class Processor implements Closeable {
 	private Document httpGet(String siteUrl) throws IOException {
 		Connection connection = Jsoup.connect(siteUrl);
 		connection.timeout(config.getTimeout());
+		Map<String, String> headers = config.getHttpHeaders();
+		for (String key : headers.keySet()) {
+			connection.header(key, headers.get(key));
+		}
 		return connection.get();
 	}
 
