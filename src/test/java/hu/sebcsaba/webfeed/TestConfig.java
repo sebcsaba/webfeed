@@ -2,6 +2,7 @@ package hu.sebcsaba.webfeed;
 
 import hu.sebcsaba.webfeed.Config.Task;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.junit.Assert;
@@ -55,6 +56,19 @@ public class TestConfig {
 		}
 		Assert.assertTrue(t1.getPager().endsWith(" a"));
 		Assert.assertTrue(t1.getSelector().endsWith(" a"));
+	}
+
+	@Test
+	public void testHttpHeaders() {
+		Properties p = new Properties();
+		p.setProperty("http.header.User-Agent", "This Is Sparta!!!");
+		p.setProperty("http.header.X-Dummy-Header", "FooBar");
+		Config c = Config.readConfig(p);
+		Map<String, String> headers = c.getHttpHeaders();
+		Assert.assertEquals(2, headers.size());
+		Assert.assertTrue(headers.containsKey("User-Agent"));
+		Assert.assertTrue(headers.containsKey("X-Dummy-Header"));
+		Assert.assertEquals("FooBar", headers.get("X-Dummy-Header"));
 	}
 
 }
