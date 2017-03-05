@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -54,7 +55,7 @@ public class Processor implements Closeable {
 	private String processSitePage(Set<String> result, Task task, String siteUrl, int urlIndex, int pageIndex) throws IOException {
 		log.println("processing "+task.getName()+", url #"+urlIndex+", page #"+pageIndex);
 		log.println("* loading "+siteUrl);
-		Document doc = Jsoup.connect(siteUrl).timeout(config.getTimeout()).get();
+		Document doc = httpGet(siteUrl);
 		Elements items = doc.select(task.getSelector());
 		log.println("* found items: "+items.size());
 		for (Element item : items) {
@@ -70,6 +71,12 @@ public class Processor implements Closeable {
 			}
 		}
 		return null;
+	}
+
+	private Document httpGet(String siteUrl) throws IOException {
+		Connection connection = Jsoup.connect(siteUrl);
+		connection.timeout(config.getTimeout());
+		return connection.get();
 	}
 
 	private String getAbsoluteUrl(String startUrl, String href) {
