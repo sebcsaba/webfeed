@@ -34,30 +34,35 @@ public class HtmlLoader {
 	}
 
 	private Document loadWget(String siteUrl, String baseUrl) throws IOException {
-		Path tempFile = Files.createTempFile("webfeed-", ".html");
-		List<String> command = new ArrayList<>();
-		command.add("wget");
-		command.add("-O");
-		command.add(tempFile.toString());
-		Map<String, String> headers = config.getHttpHeaders();
-		for (String key : headers.keySet()) {
-			command.add("--header='"+key+": "+headers.get(key)+"'");
-		}
-		command.add(siteUrl);
-		Runtime rt = Runtime.getRuntime();
-		Process p = rt.exec(command.toArray(new String[command.size()]));
-		if (p.exitValue() != 0) {
-			Scanner scanner = new Scanner(p.getErrorStream());
-			try {
-				String stderr = scanner.useDelimiter("\\A").next();
-				throw new IOException("process returned "+p.exitValue()+", stderr:\n"+stderr);
-			} finally {
-				scanner.close();
+		try {
+			Path tempFile = Files.createTempFile("webfeed-", ".html");
+			List<String> command = new ArrayList<>();
+			command.add("wget");
+			command.add("-O");
+			command.add(tempFile.toString());
+			Map<String, String> headers = config.getHttpHeaders();
+			for (String key : headers.keySet()) {
+				command.add("--header='"+key+": "+headers.get(key)+"'");
 			}
+			command.add(siteUrl);
+			ProcessBuilder pb = new ProcessBuilder(command);
+			Process process = pb.start();
+			int errCode = process.waitFor();
+			if (errCode != 0) {
+				Scanner scanner = new Scanner(process.getErrorStream());
+				try {
+					String stderr = scanner.useDelimiter("\\A").next();
+					throw new IOException("process returned "+errCode+", stderr:\n"+stderr);
+				} finally {
+					scanner.close();
+				}
+			}
+			Document doc = Jsoup.parse(tempFile.toFile(), "UTF-8", baseUrl);
+			Files.delete(tempFile);
+			return doc;
+		} catch (InterruptedException e) {
+			throw new IOException(e);
 		}
-		Document doc = Jsoup.parse(tempFile.toFile(), "UTF-8", baseUrl);
-		Files.delete(tempFile);
-		return doc;
 	}
 
 	private Document loadBuiltin(String siteUrl) throws IOException {
