@@ -21,15 +21,20 @@ public class HtmlLoader {
 	}
 
 	public Document load(String siteUrl, String baseUrl) throws IOException {
-		String httpLoader = config.getHttpLoader();
-		if ("wget".equals(httpLoader)) {
-			return loadWget(siteUrl, baseUrl);
-		}
-		else if ("builtin".equals(httpLoader) || httpLoader == null) {
-			return loadBuiltin(siteUrl);
-		}
-		else {
-			throw new IOException("Unknown http loader: "+httpLoader);
+		try {
+			String httpLoader = config.getHttpLoader();
+			Thread.sleep(config.getSleep());
+			if ("wget".equals(httpLoader)) {
+				return loadWget(siteUrl, baseUrl);
+			}
+			else if ("builtin".equals(httpLoader) || httpLoader == null) {
+				return loadBuiltin(siteUrl);
+			}
+			else {
+				throw new IOException("Unknown http loader: "+httpLoader);
+			}
+		} catch (InterruptedException e) {
+			throw new IOException(e);
 		}
 	}
 

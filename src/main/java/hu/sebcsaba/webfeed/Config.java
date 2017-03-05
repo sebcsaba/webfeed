@@ -14,10 +14,12 @@ import java.util.regex.Pattern;
 public class Config {
 
 	public static final int DEFAULT_TIMEOUT = 10000;
+	public static final int DEFAULT_SLEEP = 0;
 
 	private String serializedDataFilename;
 	private int timeout;
 	private String httpLoader;
+	private int sleep;
 	private Map<String, String> httpHeaders;
 	private Map<String, Task> tasks = new HashMap<>();
 
@@ -31,6 +33,10 @@ public class Config {
 
 	public String getHttpLoader() {
 		return httpLoader;
+	}
+
+	public int getSleep() {
+		return sleep;
 	}
 
 	public Map<String, String> getHttpHeaders() {
@@ -76,6 +82,7 @@ public class Config {
 		result.serializedDataFilename = p.getProperty("data.serialized");
 		result.timeout = Integer.parseInt(p.getProperty("connection.timeout_ms", Integer.toString(DEFAULT_TIMEOUT)));
 		result.httpLoader = p.getProperty("http.loader");
+		result.sleep = Integer.parseInt(p.getProperty("http.sleep", Integer.toString(DEFAULT_SLEEP)));
 		result.httpHeaders = getHttpHeaders(p);
 		for (String taskName : getTaskNames(p)) {
 			Task task = new Task();
