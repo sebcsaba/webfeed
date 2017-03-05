@@ -1,28 +1,27 @@
 package hu.sebcsaba.webfeed;
 
-import hu.sebcsaba.webfeed.Config.Task;
-
 import java.io.Closeable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import hu.sebcsaba.webfeed.Config.Task;
+
 public class Processor implements Closeable {
 
 	private final Config config;
+	private final HtmlLoader htmlLoader;
 	private final PrintWriter log;
 
-	public Processor(Config config) throws FileNotFoundException {
+	public Processor(Config config, HtmlLoader htmlLoader) throws FileNotFoundException {
 		this.config = config;
+		this.htmlLoader = htmlLoader;
 		this.log = new PrintWriter("webfeed.log");
 	}
 
@@ -56,7 +55,7 @@ public class Processor implements Closeable {
 	private String processSitePage(Set<String> result, Task task, String siteUrl, int urlIndex, int pageIndex) throws IOException {
 		log.println("processing "+task.getName()+", url #"+urlIndex+", page #"+pageIndex);
 		log.println("* loading "+siteUrl);
-		Document doc = httpGet(siteUrl);
+		Document doc = htmlLoader.load(siteUrl);
 		Elements items = doc.select(task.getSelector());
 		log.println("* found items: "+items.size());
 		for (Element item : items) {
@@ -72,16 +71,6 @@ public class Processor implements Closeable {
 			}
 		}
 		return null;
-	}
-
-	private Document httpGet(String siteUrl) throws IOException {
-		Connection connection = Jsoup.connect(siteUrl);
-		connection.timeout(config.getTimeout());
-		Map<String, String> headers = config.getHttpHeaders();
-		for (String key : headers.keySet()) {
-			connection.header(key, headers.get(key));
-		}
-		return connection.get();
 	}
 
 	private String getAbsoluteUrl(String startUrl, String href) {

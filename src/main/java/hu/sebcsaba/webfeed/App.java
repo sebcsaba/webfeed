@@ -60,8 +60,9 @@ public class App {
 	public void run(String configFile) throws Exception {
 		Config config = Config.readConfig(configFile);
 
+		HtmlLoader h = new HtmlLoader(config);
 		Serializer s = new Serializer(config);
-		Processor p = new Processor(config);
+		Processor p = new Processor(config, h);
 		Notifier notifier = new Notifier(config);
 
 		try {
